@@ -69,41 +69,48 @@ const Login = () => {
       };
       const { register, handleSubmit } = useForm();
     return (
+      <div style={{paddingTop:"170px"}}>
               <Box mx="auto" p={1} className={classes.margin}>
                   <Card className={classes.root}>
                     <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fjobs.nokriwp.com%2Fwp-content%2Fuploads%2F2018%2F09%2Flogin-avatar-1.png&f=1&nofb=1"></img>
                     <CardContent>
                       <form onSubmit={handleSubmit(onSubmitclick)}>
                           <div className="form-group">
-                      <input type="email" className="form-control" name="email" ref={register({ required: true})} value={email} onChange={(event) => setEmail(event.target.value)} placeholder="enter email.."/>
-                      </div>
-                      <div className="form-group">
-                        <input type="password" className="form-control" name="password" ref={register({ required: true})} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="enter password.."/>
-                      </div>
-                      {isLoading ? (
-                        <Spinner style={{ width: "3rem", height: "3rem" }} />
-                        ) : (
-                          <div className="p-1">
-                              <Button variant="contained" size="large" color="primary" type="submit" className="text-uppercase font-weight-bold">
-                                  <h2>Login</h2> 
-                                </Button>
+                           <input type="email" className="form-control" name="email" ref={register({ required: true})} value={email} onChange={(event) => setEmail(event.target.value)} placeholder="enter email.."/>
                           </div>
-                        )
-                      }
+                          <div className="form-group">
+                            <input type="password" className="form-control" name="password" ref={register({ required: true})} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="enter password.."/>
+                          </div>
+                          <div className="text-center">
+                              {isLoading ? (
+                              <Spinner style={{ width: "3rem", height: "3rem" }} />
+                              ) : (
+                                <div className="p-1">
+                                    <Button variant="contained" size="large" color="primary" type="submit" className="text-uppercase font-weight-bold">
+                                        <h2>Login</h2> 
+                                      </Button>
+                                </div>
+                              )
+                              }
+                          </div>
+                        
                       </form>
                     </CardContent>
                     <hr />
-                    <CardActions>  
-                    <div className={classes.margin}>
-                      <Typography p={1}>Not a member, Signup here ..</Typography>
+                    <CardActions>
+                      <Box mx="auto">
+                        <div className="d-flex align-content-center flex-column">
+                        <Typography p={1}>Not a member, Signup here ..</Typography>
                         <Button variant="contained" size="large" color="secondary" className="text-uppercase font-weight-bold" onClick={()=>history.push(routes.signup)}>
                           <h3>REGISTER</h3>
                         </Button>
-                    </div>
+                      </div>
+                      </Box>  
                   </CardActions>
                </Card>
                 
                 </Box> 
+                </div>
     )
 }
 

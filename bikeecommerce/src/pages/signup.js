@@ -6,12 +6,9 @@ import { useHistory } from "react-router-dom";
 import routes from "../routes/routes";
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
-import { spacing } from '@material-ui/system';
 import { Typography, Box } from "@material-ui/core";
 
 const useStyles = makeStyles({
@@ -65,7 +62,8 @@ const Signuppage = ()=>{
     };
     const { register, handleSubmit } = useForm();
     return (
-          <Box mx="auto" className={classes.margin}>
+      <div style={{paddingTop:"176px"}}>
+         <Box mx="auto" className={classes.margin}>
             <Card className={classes.root}>
             <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm1.behance.net%2Frendition%2Fmodules%2F99988087%2Fdisp%2F53985795ab8380a7cec2128a21dc9a67.jpg&f=1&nofb=1" style={{maxHeight: "300px"}}/>
               <CardContent>
@@ -98,10 +96,12 @@ const Signuppage = ()=>{
                 <Button variant="contained" size="large" color="secondary" className="text-uppercase font-weight-bold" onClick={()=>history.push(routes.login)}>
                   <h3>LOGIN</h3>
                 </Button>
-              </CardActions>
+                </CardActions>
           </div>
         </Card>
       </Box>
+    </div>
+         
     )
 }   
 

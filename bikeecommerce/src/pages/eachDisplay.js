@@ -14,8 +14,6 @@ import { useForm } from "react-hook-form";
 import routes from "../routes/routes";
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import ButtonBase from '@material-ui/core/ButtonBase';
 import { Box } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -76,7 +74,6 @@ export default function Eachproduct() {
     setOpen(false);
   };
   
-
 useEffect(() => {
   fetch(SERVER_URL + `/products/${id}`,{headers:{
       'Authorization' : 'Bearer '+ accessToken
@@ -87,40 +84,42 @@ useEffect(() => {
     .then((data) => {
       setPost(data.item);
     })
-    .catch(console.error);
+    .catch((e)=>{
+      console.error(e);
+      history.push(routes.login)
+    });
 }, []);
 const { register, handleSubmit } = useForm();
   return (
-      <>
+      <div style={{paddingTop:"180px"}}>
       <Box mx="auto" >
           <div className={classes.root}>
-      <Paper className={classes.paper}>
-        <Grid container spacing={2}>
-          <Grid item>
-              <img className={classes.image} alt="complex" src={post.vehicleImgURL} />  
-          </Grid>
-          <Grid item xs={12} sm container>
-            <Grid item xs container direction="column" spacing={2}>
+          <Paper className={classes.paper}>
+            <Grid container spacing={2}>
               <Grid item>
-                <Typography variant="h2" component="h2">{post.vehicleName}</Typography>
+                  <img className={classes.image} alt="complex" src={post.vehicleImgURL} />  
               </Grid>
-              <Grid item>
-                <Button variant="contained" size="large" color="primary" className={classes.margin} onClick={handleOpen}>
-                  <Typography variant="h5" component="h5"> BUY-NOW</Typography>
-                </Button>
+              <Grid item xs={12} sm container>
+              <div className="d-flex align-content-center flex-column text-center">
+                <h1 className="text-muted">
+                  {post.vehiclename}
+                </h1>
+                <h3 className="text-muted">
+                    Price : Rs {post.RentalPrice} /-
+                </h3>
+              </div>
+              <hr />
+              <div className="d-flex align-content-center flex-column text-center">
+                <div>
+                    <Button variant="contained" size="large" color="primary" onClick={handleOpen}>Buy - Now</Button>
+                </div>
+                <div>
+                  <Button variant="contained" size="large" color="secondary" onClick={()=>{history.push(routes.allproducts)}}>Return</Button>
+                </div>
+              </div>
               </Grid>
             </Grid>
-            <Grid item>
-              <Typography color="primary" variant="h3" component="h3">Price :Rs {post.RentalPrice}</Typography>
-            </Grid>
-            <Grid item>
-            <Button variant="contained" size="large" color="secondary" className={classes.margin} onClick={()=>history.push(routes.allproducts)}>
-                  <Typography variant="h5" component="h5">GO BACK</Typography>
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Paper>
+          </Paper>
     </div>
       </Box>
       <Modal
@@ -174,7 +173,7 @@ const { register, handleSubmit } = useForm();
           </div>
       </Fade>
   </Modal>
-  </>
+  </div>
     
   );
 }

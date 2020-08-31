@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import {
-  Navbar
-} from 'reactstrap';
+import Button from '@material-ui/core/Button';
 import routes from "../routes/routes";
 import { useRecoilValue } from "recoil";
 import { loggedinUserState } from "../recoiled/globalState";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { lineHeight } from '@material-ui/system';
 
 const useStyles = makeStyles((theme) => ({
   flex: {
     display: "flex",
     justifyContent: "center",
     alignContent:"center",
-    backgroundColor:"#2c387e",
   },
   flexitem: {
     margin: "10px",
@@ -24,14 +20,35 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NavBar = ()=>{
+  const userStatus = useRecoilValue(loggedinUserState);
+  console.log("decide",userStatus.username);
+
   const classes = useStyles();
+  const history = useHistory();
   return (
-    <nav>
-      <div className={classes.flex}>
+    <nav className="navbar fixed-top">
+        <div className={classes.flex}>
           <div className={classes.flexitem}>
-            <NavLink to={routes.landingpage}><h2>Wrappified</h2></NavLink>  
+          <h1 style={{fontSize:"56px",fontFamily:"Lobster",color:"hotpink"}}><NavLink to={routes.landingpage}>Wrappified</NavLink></h1>  
           </div>
         </div>
+          {userStatus.username === undefined?
+          (
+            <div className={classes.flex}>
+              <div className={classes.flexitem}>
+              <Button variant="contained" size="large" color="primary" type="submit" className="text-uppercase font-weight-bold" onClick={()=>history.push(routes.login)}><h2>LOGIN</h2></Button>  
+              </div>
+              <div className={classes.flexitem}>
+              <Button variant="contained" size="large" color="secondary" type="submit" className="text-uppercase font-weight-bold" onClick={()=>history.push(routes.signup)}><h2>SIGNUP</h2></Button>  
+            </div>
+          </div>
+          ):(
+            <div className={classes.flex}>
+              <div className={classes.flexitem}>
+                <Button variant="contained" size="large" color="primary" type="submit" className="text-uppercase font-weight-bold" onClick={()=>history.push(routes.logout)}><h2>LOGOUT</h2></Button>  
+              </div>
+            </div>
+          ) }
     </nav>  
   );
 }

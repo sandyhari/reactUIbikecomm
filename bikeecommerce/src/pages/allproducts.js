@@ -13,13 +13,14 @@ const Displaytable = () => {
   const { addToast } = useToasts()
   const userObj = useRecoilValue(loggedinUserState);
   const accessToken = useRecoilValue(jwtState);
-        console.log(accessToken);
+        console.log("notoken:",accessToken);
   const [content,setContent] = useState([]);
 
-
   useEffect(()=>{
-    fetch(`${SERVER_URL}/products`,{headers:{
-      'Authorization' : 'Bearer '+ accessToken
+    fetch(`${SERVER_URL}/products`,{
+      headers:{
+      'Authorization' : 'Bearer '+ accessToken,
+      'Content-Type': 'application/json'
     },
       mode:"cors"})
     .then((response) => response.json())
@@ -31,23 +32,20 @@ const Displaytable = () => {
       })
       setContent(data.result);
     })
-    .catch(()=>{
-                console.error();
-                addToast("Session expired", {
-                  appearance: 'danger',
-                  autoDismiss: true,
-                });
+    .catch((e)=>{
+                console.error(e);
+                alert("session expired");
                 history.push(routes.login)
       })},[])
 
 return(
-  <div classNameNameName="container">
-    <header classNameName="pb-2 bg-black">
+  <div className="container" style={{paddingTop:"200px"}}>
+    <header className="pb-2 bg-black">
       <h3>Welcome, {userObj.username} </h3>
     </header>
     <hr className="rounded" />
         <div className="p-3" />
-            <div className="container1">
+          <div className="container1">
             {content.map((each,eachIndex) => {
               return (
                 <Link to={routes.eachproduct.replace(":id", each._id)}>

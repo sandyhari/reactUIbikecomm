@@ -18,8 +18,8 @@ function App() {
   return (
     <div className="App">
       <NavBar />
-      <main className="bd-masthead custom-color" >
-        <div className="container-fluid" style={{minHeight:"60vh"}}>
+      <main className="">
+        <div className="container-fluid" style={{minHeight:"78vh"}}>
           <Switch>
             <Route exact path={routes.landingpage}>
               <Landingpage />

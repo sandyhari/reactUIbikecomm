@@ -66,6 +66,7 @@ export default function Eachproduct() {
   const [details,setDetails] = useRecoilState(loggedinUserState);
   const [open, setOpen] = React.useState(false);
 
+  const [paid,setPaid] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -74,6 +75,23 @@ export default function Eachproduct() {
     setOpen(false);
   };
   
+const paidClose =()=>{
+  setPaid(true);
+  addToast(`your Order has been successfully placed`, {
+      appearance: 'success',
+      autoDismiss: true,
+    })
+  handleClose();
+}
+
+const cancelTransaction=()=>{
+  setPaid(false);
+  addToast(`Transaction has been cancelled`, {
+    appearance: 'danger',
+    autoDismiss: true,
+  })
+  handleClose();
+}
 useEffect(() => {
   fetch(SERVER_URL + `/products/${id}`,{headers:{
       'Authorization' : 'Bearer '+ accessToken
@@ -89,10 +107,27 @@ useEffect(() => {
       history.push(routes.login)
     });
 }, []);
+
 const { register, handleSubmit } = useForm();
   return (
+    <>
+    {!accessToken ?(
+      <div className="text-center" style={{paddingTop:"180px"}}>
+            <div class="d-flex align-content-center flex-column text-center">
+                <h1 className="text-muted">
+                    Oops...!
+                </h1>
+                <h3 className="text-muted">
+                    you're session has been expired.
+                </h3>
+                <h3 className="text-muted">
+                    Kindly re-logon to use the services.
+                </h3>
+            </div>
+        </div>
+    ):(
       <div style={{paddingTop:"180px"}}>
-      <Box mx="auto" >
+       <Box mx="auto" >
           <div className={classes.root}>
           <Paper className={classes.paper}>
             <Grid container spacing={2}>
@@ -137,7 +172,8 @@ const { register, handleSubmit } = useForm();
       <Fade in={open}>
       <div className={classes.paperr}>
           <h1 id="transition-modal-title">ENTER CARD DETAILS</h1>
-          <form className={classes.roott} noValidate autoComplete="off" onSubmit={handleSubmit(handleClose)}>
+          <p>Total Amount : {post.RentalPrice} </p>
+          <form className={classes.roott} Validate autoComplete="off" onSubmit={handleSubmit(handleClose)}>
               <div>
               <TextField
                   name="CARD-NUMBER"
@@ -162,10 +198,10 @@ const { register, handleSubmit } = useForm();
               />
               </div>
               <div className="text-center">
-                  <Button variant="contained" size="large" color="primary" className={classes.marginn} onClick={handleClose}>
+                  <Button variant="contained" size="large" color="primary" className={classes.marginn} onClick={paidClose}>
                       PAY
                   </Button>
-                  <Button variant="contained" size="large" color="secondary" className={classes.marginn} onClick={handleClose}>
+                  <Button variant="contained" size="large" color="secondary" className={classes.marginn} onClick={cancelTransaction}>
                       CANCEL
                   </Button>
               </div>
@@ -174,6 +210,7 @@ const { register, handleSubmit } = useForm();
       </Fade>
   </Modal>
   </div>
-    
+  )}
+    </>
   );
 }

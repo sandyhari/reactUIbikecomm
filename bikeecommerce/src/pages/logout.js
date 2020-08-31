@@ -3,9 +3,14 @@ import Login from "./login"
 import { Button } from "@material-ui/core";
 import routes from "../routes/routes";
 import { useHistory } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { loggedinUserState } from "../recoiled/globalState";
 
 const Logout = () => {
     const history = useHistory()
+    const setDetails = useSetRecoilState(loggedinUserState);
+
+    setDetails({});
 
     return(
         <div className="text-center" style={{paddingTop:"180px"}}>

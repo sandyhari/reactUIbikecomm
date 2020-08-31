@@ -51,9 +51,9 @@ const Signuppage = ()=>{
         .then((response) => response.json())
         .then(() => alert("Successfully registered"))
         .then(()=>{history.push(routes.login)})
-        .catch(() => {
+        .catch((e) => {
           alert("Failed to register ,Check EmailAddress and try again");
-          console.error();
+          console.error(e);
         })
         .finally(() => {
           setIsLoading(false);

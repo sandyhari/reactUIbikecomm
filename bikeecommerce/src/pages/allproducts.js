@@ -37,7 +37,6 @@ const Displaytable = () => {
                 alert("session expired");
                 history.push(routes.login)
       })},[])
-
 return(
   <div className="container" style={{paddingTop:"200px"}}>
     <header className="pb-2 bg-black">

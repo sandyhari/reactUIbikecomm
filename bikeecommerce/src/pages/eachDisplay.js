@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams,useHistory } from "react-router-dom";
+import Axios from 'axios';
 import { useRecoilValue, useRecoilState } from "recoil";
 import { jwtState,loggedinUserState } from "../recoiled/globalState";
 import { SERVER_URL } from "../constants/serveruls";
 import { useToasts } from 'react-toast-notifications';
 import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { useForm } from "react-hook-form";
 import routes from "../routes/routes";
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import { Box } from '@material-ui/core';
+import { Box, ServerStyleSheets } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,34 +60,60 @@ export default function Eachproduct() {
   const { id } = useParams();
   const { addToast } = useToasts();
   const [details,setDetails] = useRecoilState(loggedinUserState);
-  const [open, setOpen] = React.useState(false);
 
-  const [paid,setPaid] = useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  const productamount = post.RentalPrice;
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-  
-const paidClose =()=>{
-  setPaid(true);
-  addToast(`your Order has been successfully placed`, {
-      appearance: 'success',
-      autoDismiss: true,
-    })
-  handleClose();
-}
+  const paymentHandler = async (e) => {
+    e.preventDefault();
+    const orderUrl = `${SERVER_URL}/order`;
+    const response = await Axios.post(orderUrl,{
+      amount: productamount * 100, 
+        currency: "INR",
+        receipt: "receipt#1",
+        payment_capture: 1,
+    });
+    const { data } = response;
+    const options = {
+      key: "rzp_test_na9KTMUAioqZx5",
+      name: "Wrap the Ride",
+      currency:"INR",
+      description: "Hello test transaction",
+      order_id: data.id,
+      handler: async (response) => {
+        try {
+         const paymentId = response.razorpay_payment_id;
+         if(paymentId){
+          addToast(`Hey we received your amount ${post.RentalPrice} for the order of ${post.vehiclename} under pay ID:${paymentId}`, {
+            appearance: 'success',
+            autoDismiss: true,
+          })
+          addToast(`Thanks for shopping with US..!`, {
+            appearance: 'success',
+            autoDismiss: true,
+          })
+         }
+         else{
+          addToast(`Oops your payment has been cancelled.`, {
+            appearance: 'danger',
+            autoDismiss: true,
+          })
+         }
+        } catch (err) {
+          console.log(err);
+          addToast(`Something went wrong with payment gateway`, {
+            appearance: 'danger',
+            autoDismiss: true,
+          })
+        }
+      },
+      theme: {
+        color: "#686CFD",
+      },
+    };
+    const rzp1 = new window.Razorpay(options);
+    rzp1.open();
+    };
 
-const cancelTransaction=()=>{
-  setPaid(false);
-  addToast(`Transaction has been cancelled`, {
-    appearance: 'danger',
-    autoDismiss: true,
-  })
-  handleClose();
-}
 useEffect(() => {
   fetch(SERVER_URL + `/products/${id}`,{headers:{
       'Authorization' : 'Bearer '+ accessToken
@@ -108,7 +130,6 @@ useEffect(() => {
     });
 }, []);
 
-const { register, handleSubmit } = useForm();
   return (
     <>
     {!accessToken ?(
@@ -146,7 +167,7 @@ const { register, handleSubmit } = useForm();
               <hr />
               <div className="d-flex align-content-center flex-column text-center">
                 <div>
-                    <Button variant="contained" size="large" color="primary" onClick={handleOpen}>Buy - Now</Button>
+                    <Button variant="contained" size="large" color="primary" onClick={paymentHandler}>Buy - Now</Button>
                 </div>
                 <div>
                   <Button variant="contained" size="large" color="secondary" onClick={()=>{history.push(routes.allproducts)}}>Return</Button>
@@ -156,61 +177,9 @@ const { register, handleSubmit } = useForm();
             </Grid>
           </Paper>
     </div>
-      </Box>
-      <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
-      className={classes.modal}
-      open={open}
-      onClose={handleClose}
-      closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-      timeout: 500,
-      }}
-  >
-      <Fade in={open}>
-      <div className={classes.paperr}>
-          <h1 id="transition-modal-title">ENTER CARD DETAILS</h1>
-          <p>Total Amount : {post.RentalPrice} </p>
-          <form className={classes.roott} Validate autoComplete="off" onSubmit={handleSubmit(handleClose)}>
-              <div>
-              <TextField
-                  name="CARD-NUMBER"
-                  id="standard-CARD"
-                  label="CARD-NUMBER"
-                  type="number"
-                  ref={register({ required: true})}
-              />
-              <TextField
-                  name="CVV"
-                  id="standard-cvv"
-                  label="CVV"
-                  type="number"
-                  ref={register({ required: true})}
-              />
-              <TextField
-                  name="Name on Card"
-                  id="standard-input"
-                  label="Name on Card"
-                  type="text"
-                  ref={register({ required: true})}
-              />
-              </div>
-              <div className="text-center">
-                  <Button variant="contained" size="large" color="primary" className={classes.marginn} onClick={paidClose}>
-                      PAY
-                  </Button>
-                  <Button variant="contained" size="large" color="secondary" className={classes.marginn} onClick={cancelTransaction}>
-                      CANCEL
-                  </Button>
-              </div>
-            </form>
-          </div>
-      </Fade>
-  </Modal>
-  </div>
-  )}
-    </>
-  );
-}
+    </Box>
+    </div>
+     
+  )};
+  </>
+)}
